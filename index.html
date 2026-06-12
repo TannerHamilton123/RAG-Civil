@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel"stylesheet" href="index.css"
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RAG Civil</title>
+
+  </style>
+</head>
+<body>
+
+  <header>RAG Civil Assistant</header>
+
+  <div class="layout">
+
+    <!-- ── Left: File Uploads ── -->
+    <aside class="upload-panel">
+      <h2>Upload Documents</h2>
+
+      <div class="upload-zone">
+        <label>Civil Plans (PDF)</label>
+        <label class="upload-btn" id="label-plans">
+          <span>Choose file...</span>
+          <span class="icon">📄</span>
+          <input type="file" id="file-plans" accept=".pdf" onchange="showFileName('file-plans','name-plans','label-plans')">
+        </label>
+        <span class="file-name" id="name-plans"></span>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="upload-zone">
+        <label>Specifications (DOCX / PDF)</label>
+        <label class="upload-btn" id="label-specs">
+          <span>Choose file...</span>
+          <span class="icon">📋</span>
+          <input type="file" id="file-specs" accept=".pdf,.docx" onchange="showFileName('file-specs','name-specs','label-specs')">
+        </label>
+        <span class="file-name" id="name-specs"></span>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="upload-zone">
+        <label>Geotechnical Report</label>
+        <label class="upload-btn" id="label-geo">
+          <span>Choose file...</span>
+          <span class="icon">🗺️</span>
+          <input type="file" id="file-geo" accept=".pdf,.docx" onchange="showFileName('file-geo','name-geo','label-geo')">
+        </label>
+        <span class="file-name" id="name-geo"></span>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="upload-zone">
+        <label>Additional Document</label>
+        <label class="upload-btn" id="label-extra">
+          <span>Choose file...</span>
+          <span class="icon">📎</span>
+          <input type="file" id="file-extra" onchange="showFileName('file-extra','name-extra','label-extra')">
+        </label>
+        <span class="file-name" id="name-extra"></span>
+      </div>
+    </aside>
+
+    <!-- ── Right: Chat ── -->
+    <main class="chat-panel">
+      <div class="chat-messages" id="chat-messages">
+        <div class="empty-state" id="empty-state">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span>Upload documents and ask a question to get started.</span>
+        </div>
+      </div>
+
+      <div class="chat-input-area">
+        <textarea
+          id="user-input"
+          rows="1"
+          placeholder="Ask a question about your documents..."
+          oninput="autoResize(this)"
+          onkeydown="handleKey(event)"
+        ></textarea>
+        <button class="send-btn" id="send-btn" onclick="sendMessage()">Send</button>
+      </div>
+    </main>
+
+  </div>
+
+  <script>
+    function showFileName(inputId, nameId, labelId) {
+      const input = document.getElementById(inputId);
+      const nameEl = document.getElementById(nameId);
+      const label = document.getElementById(labelId);
+      if (input.files.length > 0) {
+        nameEl.textContent = input.files[0].name;
+        label.querySelector('span').textContent = 'Change file';
+      }
+    }
+
+    function autoResize(el) {
+      el.style.height = 'auto';
+      el.style.height = Math.min(el.scrollHeight, 160) + 'px';
+    }
+
+    function handleKey(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('user-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const container = document.getElementById('chat-messages');
+      document.getElementById('empty-state')?.remove();
+
+      // User bubble
+      const userMsg = document.createElement('div');
+      userMsg.className = 'message user';
+      userMsg.textContent = text;
+      container.appendChild(userMsg);
+
+      input.value = '';
+      input.style.height = 'auto';
+      container.scrollTop = container.scrollHeight;
+
+      // Placeholder AI response — replace with real API call
+      setTimeout(() => {
+        const aiMsg = document.createElement('div');
+        aiMsg.className = 'message ai';
+        aiMsg.innerHTML = '<div class="sender">AI</div>This is a placeholder response. Wire up your API here.';
+        container.appendChild(aiMsg);
+        container.scrollTop = container.scrollHeight;
+      }, 600);
+    }
+  </script>
+
+</body>
+</html>
