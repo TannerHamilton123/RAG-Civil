@@ -1,6 +1,7 @@
-from fastapi import FastAPI, UploadFile
+from fastapi import FastAPI, UploadFile, File, Form
 from pydantic import BaseModel
 import anthropic
+import io
 from dotenv import load_dotenv
 from pypdf import PdfReader
 
@@ -30,35 +31,47 @@ async def get_number(number: int):
 class Request(BaseModel):
     question: str
 
-class UploadedDocument(BaseModel):
-    name: str
-    filepath: str
+# class UploadedDocument(BaseModel):
+#     name: str
+#     filepath: str
 
 client = anthropic.Anthropic()
 @app.post("/ask_question")
 def ask_question(request: Request):
+
+    document_context = ""
+    for file in document_store:
+        text = f"Document{file}: {document_store[file]}\n"
+        document_context += text
+
+
     message = client.messages.create(
         model="claude-haiku-4-5",
         max_tokens=1024,
         system = "You're a civil engineering assistant. " \
         "Do not assume calculations or answers. " \
-        "Only reference known knowledge, and reference any facts you make.",
+        "Only reference known knowledge, and reference any facts you make." \
+        "Reference which document you got information from, and where within the document.",
         
         messages=[{
             "role":"user",
-            "content":request.question
+            "content": f"Here are the project documents:\n\n{document_context}\n\nQuestion: {request.question}"
             }]
         )
     return {"answer":message.content[0].text}
 
+
+
 @app.post("/upload_file")
-def upload_file(file: UploadFile, category:str):
-    
-    doc = PdfReader(file)
-    text = ""
-    for page in doc.pages:
-        text+= page.extract_text()
-    document_store[file.name] = text
+async def upload_file(file: UploadFile = File(...), name:str = Form(...)):
+    contents = await file.read()
 
-
-    
+    if file.filename.endswith(".pdf"):
+        #convert bytes to readable format
+        reader = PdfReader(io.BytesIO(contents))
+        text = ""
+        for page in reader.pages:
+            text += page.extract_text()
+        
+    document_store[file.filename] = text
+    return {"message": f"Stored document under '{name}'"}

@@ -13,7 +13,17 @@
 
   <div class="upload-panel">
     <h2>Upload Documents</h2>
+        <form action="/" method="POST" enctype="multipart/form-data">
+            <label for="file-picker">Choose a file to upload:</label>
+            <input type="file" id="file-picker" name="uploaded_file">
+            <button type="submit">Upload</button>
+        </form>
+
   </div>
+
+
+
+
 
   <div class="chat-panel">
     <h2>Chat</h2>
