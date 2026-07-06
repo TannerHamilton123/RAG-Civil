@@ -13,11 +13,15 @@
 
   <div class="upload-panel">
     <h2>Upload Documents</h2>
-        <form action="/" method="POST" enctype="multipart/form-data">
+        <form>
             <label for="file-picker">Choose a file to upload:</label>
             <input type="file" id="file-picker" name="uploaded_file">
-            <button type="submit">Upload</button>
+            <button OnClick="uploadFile()" type="button">Upload</button>
         </form>
+        <div id = "uploaded_document_list">
+        </div>
+
+        
 
   </div>
 
@@ -47,6 +51,7 @@
 
 
 <script>
+    var uploaded_documents=[]
     async function sendMessage() {
 
         //Takes the message typed by user, and puts it in a new div within chat messages
@@ -63,18 +68,45 @@
         container.appendChild(userMessage);
 
         input.value = '';
-
+        //Gets response from FastAPI, sending question to Claude
         const response = await fetch('http://127.0.0.1:8000/ask_question', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ question: text })
         });
 
+        //Recieves answer from Claude
         const data = await response.json();
-
+        //Formats Claude answer and adds to html
         const aiMsg = document.createElement('div');
         aiMsg.className = 'message-ai';
         aiMsg.textContent = data.answer;
         container.appendChild(aiMsg);
         }
+
+
+
+    async function uploadFile() {
+        //populate uploaded_document_list with new file
+        var container = document.getElementById('uploaded_document_list');
+        var uploaded_file = document.getElementById('file-picker').files[0];
+        const uploaded_document = document.createElement('li');
+        uploaded_document.textContent = uploaded_file.name;
+        container.appendChild(uploaded_document);
+
+        //FormData is used because we are uploading a file
+        const formData = new FormData();
+        formData.append('file', uploaded_file);
+        formData.append('name', uploaded_file.name);
+
+        //Send file to FastAPI
+        const response = await fetch('http://127.0.0.1:8000/upload_file', {
+            method: 'POST',
+            body: formData
+        });
+
+
+
+        return html_list;
+    }
 </script>

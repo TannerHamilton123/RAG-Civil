@@ -1,0 +1,8 @@
+Date: July 4, 2026
+
+I'm able to get the claude response as well as file upload to work.
+
+My test, create a pdf of simple text describing a fake project.
+ask the chat bot question about the project.
+
+Now i must do the actual RAG work. If i just have the pdf text be inserted into every query, it will be too many tokens.

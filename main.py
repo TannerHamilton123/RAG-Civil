@@ -66,12 +66,13 @@ def ask_question(request: Request):
 async def upload_file(file: UploadFile = File(...), name:str = Form(...)):
     contents = await file.read()
 
-    if file.filename.endswith(".pdf"):
+    if name.endswith(".pdf"):
         #convert bytes to readable format
         reader = PdfReader(io.BytesIO(contents))
         text = ""
         for page in reader.pages:
             text += page.extract_text()
-        
-    document_store[file.filename] = text
+        document_store[name] = text
+        print("document" + name + " uploaded")
+
     return {"message": f"Stored document under '{name}'"}
