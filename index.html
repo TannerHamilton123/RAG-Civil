@@ -49,8 +49,9 @@
 </body>
 </html>
 
-
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
+
     var uploaded_documents=[]
     async function sendMessage() {
 
@@ -80,7 +81,7 @@
         //Formats Claude answer and adds to html
         const aiMsg = document.createElement('div');
         aiMsg.className = 'message-ai';
-        aiMsg.textContent = data.answer;
+        aiMsg.innerHTML = marked.parse(data.answer);
         container.appendChild(aiMsg);
         }
 
@@ -104,9 +105,5 @@
             method: 'POST',
             body: formData
         });
-
-
-
-        return html_list;
     }
 </script>

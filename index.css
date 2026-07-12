@@ -96,6 +96,11 @@ button {
   max-width: 70%;
 }
 
+.message-ai ul,
+.message-ai ol {
+  padding-left: 20px;
+}
+
 #chat-messages {
   display: flex;
   flex-direction: column;
