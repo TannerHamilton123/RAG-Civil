@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, Form
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from pydantic import BaseModel
 import anthropic
 import io
@@ -78,20 +78,25 @@ client = anthropic.Anthropic()
 def ask_question(request: Request):
 
     relevant_chunks = get_relevant_chunks(request.question)
-    message = client.messages.create(
-        model="claude-haiku-4-5",
-        max_tokens=1024,
-        system = "You're a civil engineering assistant. " \
-        "Do not assume calculations or answers. " \
-        "Only reference known knowledge, and reference any facts you make." \
-        "Reference which document you got information from, and where within the document.",
-        
-        messages=[{
-            "role":"user",
-            "content": f"Here are the project documents:\n\n{relevant_chunks}\n\nQuestion: {request.question}"
-            }]
-        )
-    return {"answer":message.content[0].text}
+    try:
+        message = client.messages.create(
+            model="claude-haiku-4-5",
+            max_tokens=1024,
+            system = "You're a civil engineering assistant. " \
+            "Do not assume calculations or answers. " \
+            "Only reference known knowledge, and reference any facts you make." \
+            "Reference which document you got information from, and where within the document.",
+            
+            messages=[{
+                "role":"user",
+                "content": f"Here are the project documents:\n\n{relevant_chunks}\n\nQuestion: {request.question}"
+                }]
+            )
+        return {"answer":message.content[0].text}
+    
+    except anthropic.BadRequestError:
+        return{"answer": "Invalid request or context is maxxed out!"}
+
 
 
 

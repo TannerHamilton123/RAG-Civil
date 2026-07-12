@@ -15,10 +15,10 @@
     <h2>Upload Documents</h2>
         <form>
             <label for="file-picker">Choose a file to upload:</label>
-            <input type="file" id="file-picker" name="uploaded_file">
-            <button OnClick="uploadFile()" type="button">Upload</button>
+            <input type="file" id="file-picker" name="uploaded_file" onchange="uploadFile()">
         </form>
         <div id = "uploaded_document_list">
+
         </div>
 
         
@@ -34,6 +34,18 @@
         <div class="chat-panel">
 
             <div id="chat-messages">
+                <div class="message-ai">
+                    <p><strong>Welcome to RAG Civil Assistant.</strong></p>
+                    
+                    <p>This assistant uses Claude Haiku to answer questions. 
+                    <p>OpenAI is used for indexing the pdf information.</p>
+                    <p>To get started:</p>
+                    <ul>
+                        <li>Upload one or more documents using the panel on the left.</li>
+                        <li>Ask a question about them in the box below.</li>
+                    </ul>
+                    <p>The assistant will only answer using what's in the documents you've provided, and cite the location of the information I used.</p>
+                </div>
             </div>
 
             <div class="chat-input-area">
