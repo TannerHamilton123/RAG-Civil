@@ -81,8 +81,15 @@
         container.appendChild(userMessage);
 
         input.value = '';
+
+        //Shows an animated indicator while waiting for Claude to respond
+        const typingIndicator = document.createElement('div');
+        typingIndicator.className = 'message-ai typing-indicator';
+        typingIndicator.innerHTML = '<span></span><span></span><span></span>';
+        container.appendChild(typingIndicator);
+
         //Gets response from FastAPI, sending question to Claude
-        const response = await fetch('http://127.0.0.1:8000/ask_question', {
+        const response = await fetch('rag-civil-production.up.railway.app/ask_question', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ question: text })
@@ -90,6 +97,9 @@
 
         //Recieves answer from Claude
         const data = await response.json();
+
+        typingIndicator.remove();
+
         //Formats Claude answer and adds to html
         const aiMsg = document.createElement('div');
         aiMsg.className = 'message-ai';
@@ -103,8 +113,11 @@
         //populate uploaded_document_list with new file
         var container = document.getElementById('uploaded_document_list');
         var uploaded_file = document.getElementById('file-picker').files[0];
+
+        //Shows a spinner next to the file name while it's being chunked and embedded
         const uploaded_document = document.createElement('li');
-        uploaded_document.textContent = uploaded_file.name;
+        uploaded_document.className = 'upload-status';
+        uploaded_document.innerHTML = `<span class="spinner"></span> Uploading ${uploaded_file.name}...`;
         container.appendChild(uploaded_document);
 
         //FormData is used because we are uploading a file
@@ -113,9 +126,12 @@
         formData.append('name', uploaded_file.name);
 
         //Send file to FastAPI
-        const response = await fetch('http://127.0.0.1:8000/upload_file', {
+        const response = await fetch('rag-civil-production.up.railway.app/upload_file', {
             method: 'POST',
             body: formData
         });
+
+        uploaded_document.className = '';
+        uploaded_document.textContent = uploaded_file.name;
     }
 </script>
