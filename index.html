@@ -89,7 +89,7 @@
         container.appendChild(typingIndicator);
 
         //Gets response from FastAPI, sending question to Claude
-        const response = await fetch('rag-civil-production.up.railway.app/ask_question', {
+        const response = await fetch('https://rag-civil-production.up.railway.app/ask_question', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ question: text })
@@ -126,7 +126,7 @@
         formData.append('name', uploaded_file.name);
 
         //Send file to FastAPI
-        const response = await fetch('rag-civil-production.up.railway.app/upload_file', {
+        const response = await fetch('https://rag-civil-production.up.railway.app/upload_file', {
             method: 'POST',
             body: formData
         });
